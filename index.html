@@ -3,28 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accès à la caméra</title>
+    <title>Caméra avec Cube 3D devant</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        video { display: none; } /* Cacher l'élément vidéo */
+    </style>
+    <!-- Ajouter Three.js via jsDelivr CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
 </head>
 <body>
-    <h1>Accès à la caméra</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-
+    <h1>Vue de la caméra avec Cube 3D devant</h1>
+    <video id="video" autoplay></video>
     <script>
-        // Vérification de la disponibilité de l'API
+        // Vérifier la compatibilité avec la caméra
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            // Demander l'accès à la caméra
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
-                    // Associer le flux vidéo à l'élément <video>
-                    var videoElement = document.getElementById('video');
-                    videoElement.srcObject = stream;
+                    // Afficher le flux vidéo
+                    const video = document.getElementById('video');
+                    video.srcObject = stream;
+
+                    // Créer la scène Three.js
+                    const scene = new THREE.Scene();
+                    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                    const renderer = new THREE.WebGLRenderer();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    document.body.appendChild(renderer.domElement);
+
+                    // Ajouter un éclairage directionnel pour un shading réaliste
+                    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                    directionalLight.position.set(5, 5, 5).normalize();
+                    scene.add(directionalLight);
+
+                    // Ajouter une lumière ambiante pour un éclairage global doux
+                    const ambientLight = new THREE.AmbientLight(0x404040, 0.5); // Lumière ambiante douce
+                    scene.add(ambientLight);
+
+                    // Ajouter une texture vidéo comme fond avec le bon aspect ratio
+                    const videoTexture = new THREE.VideoTexture(video);
+                    const aspectRatio = video.videoWidth / video.videoHeight;
+                    const planeGeometry = new THREE.PlaneGeometry(aspectRatio * 5, 5); // Ajuster la taille du plan selon l'aspect ratio
+                    const planeMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
+                    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+                    plane.position.z = -3;  // Placer le plan derrière le cube
+                    plane.rotation.x = Math.PI / 2;  // Rotation pour aligner la vidéo horizontalement
+                    scene.add(plane);
+
+                    // Ajouter un cube 3D avec un shading réaliste
+                    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+                    const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, metalness: 0.1 });
+                    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+                    scene.add(cube);
+
+                    // Fonction de gestion des erreurs de la géométrie
+                    function safeComputeBoundingSphere(geometry) {
+                        try {
+                            geometry.computeBoundingSphere();
+                        } catch (error) {
+                            console.error("Erreur lors du calcul du bounding sphere : ", error);
+                        }
+                    }
+
+                    // Vérification de la validité de la géométrie avant de calculer le bounding sphere
+                    function isValidGeometry(geometry) {
+                        const positions = geometry.attributes.position.array;
+                        for (let i = 0; i < positions.length; i++) {
+                            if (isNaN(positions[i]) || !isFinite(positions[i])) {
+                                console.error("Position invalide détectée à l'indice " + i);
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    // Appliquer les vérifications et calculs sur la géométrie
+                    if (isValidGeometry(cubeGeometry)) {
+                        safeComputeBoundingSphere(cubeGeometry);
+                    } else {
+                        console.error("La géométrie du cube contient des valeurs invalides.");
+                    }
+
+                    // Positionner la caméra
+                    camera.position.z = 5;
+
+                    // Animer la scène
+                    function animate() {
+                        requestAnimationFrame(animate);
+
+                        // Faire tourner le cube
+                        cube.rotation.x += 0.01;
+                        cube.rotation.y += 0.01;
+
+                        // Rendu de la scène
+                        renderer.render(scene, camera);
+                    }
+
+                    animate();
                 })
                 .catch(function(error) {
-                    console.error("Erreur lors de l'accès à la caméra: ", error);
+                    console.error("Erreur lors de l'accès à la caméra : ", error);
                 });
         } else {
-            console.log("L'API getUserMedia n'est pas supportée sur ce navigateur.");
+            alert("Désolé, votre navigateur ne supporte pas l'accès à la caméra.");
         }
+
+        // Gérer la taille de la fenêtre
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
