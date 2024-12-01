@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès à la caméra</title>
+</head>
+<body>
+    <h1>Accès à la caméra</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <script>
+        // Vérification de la disponibilité de l'API
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Demander l'accès à la caméra
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    // Associer le flux vidéo à l'élément <video>
+                    var videoElement = document.getElementById('video');
+                    videoElement.srcObject = stream;
+                })
+                .catch(function(error) {
+                    console.error("Erreur lors de l'accès à la caméra: ", error);
+                });
+        } else {
+            console.log("L'API getUserMedia n'est pas supportée sur ce navigateur.");
+        }
+    </script>
+</body>
+</html>
