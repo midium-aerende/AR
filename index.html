@@ -11,6 +11,8 @@
     </style>
     <!-- Ajouter Three.js via jsDelivr CDN -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+    <!-- Ajouter le support AR via ARButton -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/vr/ARButton.js"></script>
 </head>
 <body>
     <h1>Vue de la caméra avec Cube 3D devant</h1>
@@ -100,6 +102,12 @@
                     }
 
                     animate();
+
+                    // Ajouter le bouton AR
+                    const arButton = ARButton.createButton(renderer, {
+                        requiredFeatures: ['hit-test']
+                    });
+                    document.body.appendChild(arButton);
                 })
                 .catch(function(error) {
                     console.error("Erreur lors de l'accès à la caméra : ", error);
