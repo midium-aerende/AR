@@ -44,15 +44,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       </details>
     </header>
     <script type="module">
-      import { WebXRButton } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/webxr-button.js';
-import { Scene } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/scene.js';
-import { Renderer, createWebGLContext } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/renderer.js';
-import { UrlTexture } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/texture.js';
-import { ButtonNode } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/button.js';
-import { Gltf2Node } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/gltf2.js';
-import { VideoNode } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/video.js';
-import { InlineViewerHelper } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/inline-viewer-helper.js';
-import { QueryArgs } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/query-args.js';
+      import { WebXRButton } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/util/webxr-button.js';
+import { Scene } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/render/scenes/scene.js';
+import { Renderer, createWebGLContext } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/render/core/renderer.js';
+import { UrlTexture } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/render/core/texture.js';
+import { ButtonNode } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/render/nodes/button.js';
+import { Gltf2Node } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/render/nodes/gltf2.js';
+import { VideoNode } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/render/nodes/video.js';
+import { InlineViewerHelper } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/util/inline-viewer-helper.js';
+import { QueryArgs } from 'https://raw.githubusercontent.com/immersive-web/webxr-samples/main/js/util/query-args.js';
       import WebXRPolyfill from './js/third-party/webxr-polyfill/build/webxr-polyfill.module.js';
 
       if (QueryArgs.getBool('usePolyfill', true)) {
